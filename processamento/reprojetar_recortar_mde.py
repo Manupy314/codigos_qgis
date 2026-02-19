@@ -9,9 +9,7 @@ from qgis.core import (
 from qgis import processing
 import os
 
-# ============================================================
 # 1. ESCOLHER O RASTER ANADEM
-# ============================================================
 
 anadem_path, _ = QFileDialog.getOpenFileName(
     None,
@@ -29,9 +27,7 @@ if not anadem_layer.isValid():
 
 QgsProject.instance().addMapLayer(anadem_layer)
 
-# ============================================================
 # 2. ESCOLHER O NOVO SRC/CRS PARA REPROJETAR
-# ============================================================
 
 proj_dlg = QgsProjectionSelectionDialog()
 proj_dlg.setCrs(anadem_layer.crs())  # começa mostrando o SRC atual
@@ -66,9 +62,7 @@ if not anadem_reproj.isValid():
     raise Exception("Falha ao carregar o raster reprojetado.")
 QgsProject.instance().addMapLayer(anadem_reproj)
 
-# ============================================================
 # 3. ESCOLHER CAMADA DE RECORTE (VETOR POLIGONAL)
-# ============================================================
 
 # Lista apenas camadas vetoriais de polígono no projeto
 all_layers = list(QgsProject.instance().mapLayers().values())
@@ -97,11 +91,8 @@ if not ok:
 
 mask_layer = polygon_layers[layer_names.index(mask_name)]
 
-# ============================================================
 # 4. ESCOLHER O LOCAL E NOME DO ARQUIVO DE SAÍDA
-# ============================================================
 
-# Sugestão automática de nome de arquivo
 base_name = os.path.splitext(os.path.basename(anadem_path))[0]
 sugestao_nome = base_name + "_recortado.tif"
 
@@ -119,9 +110,7 @@ if not output_path:
 if not output_path.lower().endswith(".tif"):
     output_path = output_path + ".tif"
 
-# ============================================================
 # 5. RECORTAR O ANADEM REPROJETADO PELA MÁSCARA
-# ============================================================
 
 params_clip = {
     'INPUT': anadem_reproj,

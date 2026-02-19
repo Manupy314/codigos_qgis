@@ -8,4 +8,3 @@ for layer in projeto.mapLayers().values():
     print("  AuthID:", crs.authid())          # Ex.: 'EPSG:31982' ou 'USER:100001'
     print("  EPSG numérico:", crs.postgisSrid())  # Ex.: 31982
     print("  Descrição:", crs.description())
-    print("-" * 40)

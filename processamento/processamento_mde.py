@@ -11,9 +11,7 @@ from qgis.utils import iface
 from qgis import processing
 import os
 
-# -------------------------------------------------------------------
 # CONTROLE DE PROGRESSO
-# -------------------------------------------------------------------
 
 TOTAL_STEPS = 7  # número de etapas principais do fluxo
 
@@ -40,9 +38,7 @@ def log_step(step, text):
         duration=5  # segundos
     )
 
-# -------------------------------------------------------------------
 # FUNÇÕES AUXILIARES DE DIÁLOGO
-# -------------------------------------------------------------------
 
 def escolher_raster(titulo="Selecione um raster"):
     path, _ = QFileDialog.getOpenFileName(
@@ -80,9 +76,7 @@ def escolher_saida_raster(titulo, nome_sugerido):
         path = path + ".tif"
     return path
 
-# -------------------------------------------------------------------
 # 1) ESCOLHER ANADEM
-# -------------------------------------------------------------------
 
 log_step(1, "Selecionando e carregando o raster ANADEM.")
 anadem_path = escolher_raster("Selecione o raster ANADEM")
@@ -91,10 +85,7 @@ anadem_layer = QgsRasterLayer(anadem_path, "ANADEM_original")
 if not anadem_layer.isValid():
     raise Exception("Raster ANADEM inválido.")
 
-# -------------------------------------------------------------------
 # 2) ESCOLHER SRC DO ANADEM (EPSG)
-#    0 = manter SRC atual do raster
-# -------------------------------------------------------------------
 
 proj = QgsProject.instance()
 crs_proj = proj.crs()
@@ -115,9 +106,7 @@ if epsg_valor > 0:
     novo_crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg_valor)
     anadem_layer.setCrs(novo_crs)
 
-# -------------------------------------------------------------------
 # 3) REPROJETAR PARA O SRC DO PROJETO, SE NECESSÁRIO
-# -------------------------------------------------------------------
 
 log_step(3, "Verificando necessidade de reprojeção para o SRC do projeto.")
 target_crs = crs_proj
@@ -151,9 +140,7 @@ else:
     reproj_layer = anadem_layer
     reproj_path = anadem_path
 
-# -------------------------------------------------------------------
 # 4) RECORTAR A PARTIR DE UMA CAMADA DE MÁSCARA (CAIXA DE DIÁLOGO)
-# -------------------------------------------------------------------
 
 log_step(4, "Selecionando camada de máscara e recortando o ANADEM.")
 mask_path = escolher_vetor("Selecione a camada de máscara (vetor)")
@@ -187,10 +174,8 @@ if not dem_clip_layer.isValid():
     raise Exception("Falha ao recortar o raster pela máscara.")
 log_step(4, "Recorte do ANADEM pela máscara concluído.")
 
-# -------------------------------------------------------------------
 # 5) r.fill.dir – MDE SEM DEPRESSÃO + DIREÇÃO DE FLUXO
 #    (ESCOLHER SAÍDA EM CAIXA DE DIÁLOGO)
-# -------------------------------------------------------------------
 
 log_step(5, "Configurando saídas e executando r.fill.dir.")
 saida_mde_sem_dep = escolher_saida_raster(
@@ -229,9 +214,7 @@ if dir_fluxo_layer.isValid():
 
 log_step(5, "r.fill.dir concluído – MDE sem depressão e direção de fluxo gerados.")
 
-# -------------------------------------------------------------------
 # 6) r.watershed – DEFINIÇÃO DO THRESHOLD E PREPARO DO DEM
-# -------------------------------------------------------------------
 
 log_step(6, "Definindo limiar (threshold) para r.watershed.")
 threshold, ok = QInputDialog.getInt(
@@ -250,12 +233,10 @@ if not dem_filled_layer.isValid():
 
 log_step(6, "Threshold definido e MDE sem depressão preparado para r.watershed.")
 
-# -------------------------------------------------------------------
 # 7) r.watershed – SAÍDAS COM CAIXA DE DIÁLOGO
 #    - número de células que drenam -> accumulation
 #    - direção de drenagem          -> drainage
 #    - segmento de fluxo            -> stream
-# -------------------------------------------------------------------
 
 log_step(7, "Configurando saídas e executando r.watershed.")
 saida_acumulacao = escolher_saida_raster(
