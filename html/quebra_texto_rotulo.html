@@ -1,0 +1,21 @@
+with_variable(
+'palavras',
+string_to_array("NM_MUN", ' '),
+
+'<div>' ||
+
+    array_to_string(
+    array_foreach(
+    @palavras,
+    CASE
+    WHEN lower(@element) IN ('de','do','da','dos','das','e')
+
+    THEN @element || ' '
+    ELSE @element || '<br>'
+    END
+    ),
+    ''
+    )
+
+    || '</div>'
+)
