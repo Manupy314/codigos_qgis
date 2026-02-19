@@ -1,0 +1,25 @@
+from qgis.core import QgsProject
+from qgis.utils import iface
+
+# Encontra o grupo "BACIAS"
+root = QgsProject.instance().layerTreeRoot()
+group = root.findGroup("BACIAS")
+
+# Pega todas as camadas do grupo
+if group:
+    layer_nodes = group.findLayers()  # CORREÇÃO: usar findLayers() em vez de children()
+else:
+    # Se não encontrar o grupo, usa todas as camadas do projeto
+    layer_nodes = root.findLayers()
+
+print(f"Encontradas {len(layer_nodes)} camadas no grupo BACIAS")
+
+# Renomeia conforme a ordem atual do painel
+for i, node in enumerate(layer_nodes, start=1):
+    layer = node.layer()
+    old_name = layer.name()
+    new_name = f"BH{str(i).zfill(2)}"
+    layer.setName(new_name)
+    print(f"✅ Renomeado: {old_name} → {new_name}")
+
+print(f"\n🎉 {len(layer_nodes)} camadas renomeadas com sucesso!")
