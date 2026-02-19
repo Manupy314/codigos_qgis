@@ -9,9 +9,7 @@ from qgis.core import (
 from qgis.PyQt.QtWidgets import QFileDialog, QInputDialog
 from qgis.utils import iface
 
-# ============================================================
 # 0. SELECIONAR GRUPO DO PROJETO
-# ============================================================
 
 project = QgsProject.instance()
 root = project.layerTreeRoot()
@@ -57,9 +55,7 @@ if not layer_nodes:
 print(f"Grupo selecionado: {group.name()}")
 print(f"Total de camadas: {len(layer_nodes)}\n")
 
-# ============================================================
 # 1. ESCOLHER PASTA DE SAÍDA
-# ============================================================
 
 output_folder = QFileDialog.getExistingDirectory(
     iface.mainWindow(),
@@ -73,9 +69,7 @@ os.makedirs(output_folder, exist_ok=True)
 
 print(f"Arquivos QML serão salvos em:\n{output_folder}\n")
 
-# ============================================================
 # 2. EXPORTAR APENAS OS ESTILOS (.qml)
-# ============================================================
 
 for node in layer_nodes:
     layer = node.layer()

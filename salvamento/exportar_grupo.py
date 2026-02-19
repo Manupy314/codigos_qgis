@@ -11,14 +11,12 @@ from qgis.core import (
 from qgis.PyQt.QtWidgets import QFileDialog, QInputDialog
 from qgis.utils import iface
 
-# ============================================================
 # 0. ESCOLHER GRUPO EM CAIXA DE DIÁLOGO
-# ============================================================
 
 project = QgsProject.instance()
 root = project.layerTreeRoot()
 
-# Coletar todos os grupos existentes no projeto (em qualquer nível)
+# Coletar todos os grupos existentes no projeto
 grupos = []
 
 def coletar_grupos(node):
@@ -68,9 +66,7 @@ print(f"Grupo '{group_name}' encontrado com {len(layer_nodes)} camada(s).\n")
 if not layer_nodes:
     raise Exception(f"O grupo '{group_name}' não contém nenhuma camada para exportar.")
 
-# ============================================================
 # 1. ESCOLHER PASTA DE SAÍDA EM JANELA DE DIÁLOGO
-# ============================================================
 
 output_folder = QFileDialog.getExistingDirectory(
     iface.mainWindow(),
@@ -83,9 +79,7 @@ if not output_folder:
 os.makedirs(output_folder, exist_ok=True)
 print(f"Arquivos serão salvos em:\n{output_folder}\n")
 
-# ============================================================
 # 2. EXPORTAR CAMADAS DO GRUPO
-# ============================================================
 
 transform_context = project.transformContext()
 
@@ -111,9 +105,7 @@ for node in layer_nodes:
         .replace("|", "_")
     )
 
-    # ==========================================
     # CAMADAS VETORIAIS
-    # ==========================================
     if isinstance(layer, QgsVectorLayer):
         print(f"  → Salvando VETOR como GeoPackage...")
 
@@ -149,9 +141,7 @@ for node in layer_nodes:
         else:
             print(f"    Não foi possível salvar o estilo da camada '{layer_name}'.")
 
-    # ==========================================
-    # CAMADAS RASTER (cópia + QML)
-    # ==========================================
+    # CAMADAS RASTER
     elif isinstance(layer, QgsRasterLayer):
         print(f"  → Salvando RASTER (cópia fiel do original)...")
 
@@ -183,9 +173,7 @@ for node in layer_nodes:
         else:
             print(f"    Não foi possível salvar o estilo do raster '{layer_name}'.")
 
-    # ==========================================
     # TIPO DE CAMADA NÃO RECONHECIDO
-    # ==========================================
     else:
         print(f"  Tipo de camada não suportado: {type(layer).__name__}")
 
